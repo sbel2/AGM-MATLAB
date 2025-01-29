@@ -2,11 +2,17 @@ clear all
 close all
 load('decoy_233_participants.mat');
 
+% Extract relevant data
+Arate = data.Arate;
+Acost = data.Acost;
+Brate = data.Brate;
+Bcost = data.Bcost;
 Dcost = data.Dcost;
 Drate = data.Drate;
 costbin = data.costbin;
 ratebin = data.ratebin;
 
+% Function to find quantile based on cost
 function quantile = findQuantileCost(att_val, bin)
     numBins = length(bin) - 1;  % Number of bins is one less than number of edges
     interval = 0;  % Initialize interval to zero, indicating not found
@@ -27,6 +33,7 @@ function quantile = findQuantileCost(att_val, bin)
     end
 end
 
+% Function to find quantile based on rate
 function quantile = findQuantileRate(att_val, bin)
     numBins = length(bin) - 1;  % Number of bins is one less than number of edges
     interval = 0;  % Initialize interval to zero
@@ -47,17 +54,35 @@ function quantile = findQuantileRate(att_val, bin)
     end
 end
 
-% Calculate quantiles for each participant
-quantileCost = zeros(size(Dcost));  % Initialize matrix for quantile values
-quantileRate = zeros(size(Drate));
+% Initialize matrices for quantiles
+quantileCostA = zeros(size(Acost));
+quantileRateA = zeros(size(Arate));
+quantileCostB = zeros(size(Bcost));
+quantileRateB = zeros(size(Brate));
+quantileCostD = zeros(size(Dcost));
+quantileRateD = zeros(size(Drate));
 
+% Calculate quantiles for each option (A, B, D)
 for i = 1:size(Dcost, 1)  % Iterate over each participant
     for j = 1:size(Dcost, 2)  % Iterate over each measurement
-        quantileCost(i, j) = findQuantileCost(Dcost(i, j), costbin(i, :));
-        quantileRate(i, j) = findQuantileRate(Drate(i, j), ratebin(i, :));
+        % Option A
+        quantileCostA(i, j) = findQuantileCost(Acost(i, j), costbin(i, :));
+        quantileRateA(i, j) = findQuantileRate(Arate(i, j), ratebin(i, :));
+        
+        % Option B
+        quantileCostB(i, j) = findQuantileCost(Bcost(i, j), costbin(i, :));
+        quantileRateB(i, j) = findQuantileRate(Brate(i, j), ratebin(i, :));
+        
+        % Option D
+        quantileCostD(i, j) = findQuantileCost(Dcost(i, j), costbin(i, :));
+        quantileRateD(i, j) = findQuantileRate(Drate(i, j), ratebin(i, :));
     end
 end
 
-
-csvwrite('qcost.csv', quantileCost);
-csvwrite('qrate.csv', quantileRate);
+% Save results as .mat files
+save('quantileCostA.mat', 'quantileCostA');
+save('quantileRateA.mat', 'quantileRateA');
+save('quantileCostB.mat', 'quantileCostB');
+save('quantileRateB.mat', 'quantileRateB');
+save('quantileCostD.mat', 'quantileCostD');
+save('quantileRateD.mat', 'quantileRateD');

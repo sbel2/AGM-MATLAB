@@ -4,7 +4,8 @@ close all
 load('decoy_233_participants.mat');
 
 % select participants on basis of performance
-submat = find(data.sig_sub>0.99);
+load('submat_file.mat');
+load('decoybin.mat');
 
 
 %% load fitted model & perform model comparison
@@ -40,9 +41,9 @@ for c = 1:6
     subplot(2,3,c)
     
     if c < 4;
-        eval(['RCS = makeCP(data.decoybin(submat,:,:),data.',compz{c},'(submat,:),0,sm);'])
+        eval(['RCS = makeCP(decoybin(submat,:,:),data.',compz{c},'(submat,:),0,sm);'])
     else
-        eval(['RCS = makeCP(data.decoybin(submat,:,:),sim(model).',mcompz{c-3},'(1:length(submat),:),0,sm);']);
+        eval(['RCS = makeCP(decoybin(submat,:,:),sim(model).',mcompz{c-3},'(1:length(submat),:),0,sm);']);
         %eval(['RCS = makeCP(data.decoybin(submat,:,:),sim_struct.',mcompz{c-3},'(1:length(submat),:),0,sm);']);
     end
     

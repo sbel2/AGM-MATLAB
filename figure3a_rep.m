@@ -4,7 +4,8 @@ close all
 load('decoy_233_participants.mat');
 
 % select participants on basis of performance
-submat = find(data.sig_sub>0.99);
+load('submat_file.mat');
+load('decoybin.mat');
 
 
 %% load fitted model & perform model comparison
@@ -20,8 +21,6 @@ load('rep_sim_struct');
 norm = 0;  % this is without normalisation
 sm = 1;    % but with smoothing on
 
-% we use model 2 from now on because it fits best
-model = 2;
 
 figure('color',[1 1 1],'position', [417 445 1003 503]);
 
@@ -41,10 +40,10 @@ for c = 1:6
     subplot(2,3,c)
     
     if c < 4;
-        eval(['RCS = makeCP(data.decoybin(submat,:,:),data.',compz{c},'(submat,:),0,sm);'])
+        eval(['RCS = makeCP(decoybin(submat,:,:),data.',compz{c},'(submat,:),0,sm);'])
     else
         %eval(['RCS = makeCP(data.decoybin(submat,:,:),sim(model).',mcompz{c-3},'(1:length(submat),:),0,sm);']);
-        eval(['RCS = makeCP(data.decoybin(submat,:,:),sim_struct.',mcompz{c-3},'(1:length(submat),:),0,sm);']);
+        eval(['RCS = makeCP(decoybin(submat,:,:),sim_struct.',mcompz{c-3},'(1:length(submat),:),0,sm);']);
     end
     
     %mean_RCS = (squeeze(tsnanmean(RCS,1)));
