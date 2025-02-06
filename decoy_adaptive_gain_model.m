@@ -18,7 +18,8 @@ n_att2    = sigmoid(X.att2-mean_att2,0,1,bias_j,slope_j);
 
 sim.DV = n_att1*weight + n_att2*(1-weight);
 
-cp     = softmax(sim.DV./temp);
+cp     = exp(sim.DV./temp);
+cp     = cp./sum(cp,2);
 
 sim.pAB = cp(:,1)./(cp(:,1)+cp(:,2));
 sim.pAD = cp(:,1)./(cp(:,1)+cp(:,3));

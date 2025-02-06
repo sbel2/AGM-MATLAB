@@ -1,32 +1,16 @@
 %% load raw data & model fits
-clear all
-close all
 load('decoy_233_participants.mat');
+submat = find(data.sig_sub>0.99);
 
-% select participants on basis of performance
-load('submat_file.mat');
-load('decoybin.mat');
+load('sim2.mat');
 
-
-%% load fitted model & perform model comparison
-% this requires the installation of VBA toolbox from https://mbb-team.github.io/VBA-toolbox/
-
-
-load('rep_sim_struct');
-%load('sim_3_adaptive_gain_models');
-
-% Bayesian model comparison
-%[posterior,out] = VBA_groupBMC(-BIC');
-
-norm = 0;  % this is without normalisation
-sm = 1;    % but with smoothing on
-
+norm = 0;
+sm = 1;
 
 figure('color',[1 1 1],'position', [417 445 1003 503]);
 
 compz = {'prefAtoB','prefAtoD','prefBtoD'};
-mcompz = {'pAB_a','pAD_a','pBD_a'};
-%mcompz = {'pAB','pAD','pBD'};
+mcompz = {'pAB','pAD','pBD'};
 
 % range for AB, AD and BD
 climz = [0.25 0.35; 0 1; 0 1; 0.25 0.35; 0 1; 0 1];
@@ -34,19 +18,16 @@ climz = [0.25 0.35; 0 1; 0 1; 0.25 0.35; 0 1; 0 1];
 % number of components
 numk = 5;
 
-% loop over AB, AD and BD for both human and modeel
+% loop over AB, AD and BD for both human and model
 for c = 1:6
-    disp(['generating ', num2str(c)]);
     subplot(2,3,c)
     
     if c < 4;
-        eval(['RCS = makeCP(decoybin(submat,:,:),data.',compz{c},'(submat,:),0,sm);'])
+        eval(['RCS = makeCP(data.decoybin(submat,:,:),data.',compz{c},'(submat,:),0,sm);'])
     else
-        %eval(['RCS = makeCP(data.decoybin(submat,:,:),sim(model).',mcompz{c-3},'(1:length(submat),:),0,sm);']);
-        eval(['RCS = makeCP(decoybin(submat,:,:),sim_struct.',mcompz{c-3},'(1:length(submat),:),0,sm);']);
+        eval(['RCS = makeCP(data.decoybin(submat,:,:),sim2.',mcompz{c-3},'(1:length(submat),:),0,sm);']);
     end
     
-    %mean_RCS = (squeeze(tsnanmean(RCS,1)));
     mean_RCS = (squeeze(tsnanmean(RCS,1)));
     
     imagesc(mean_RCS);colorbar;
