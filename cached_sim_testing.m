@@ -95,3 +95,5 @@ for c = 1:6
         title(compz{c});
     end
 end
+
+save('sim2.mat', 'sim2');
